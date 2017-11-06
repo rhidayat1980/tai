@@ -1,4 +1,4 @@
-defmodule Tai.AccountsSupervisor do
+defmodule Tai.Accounts.AdaptersSupervisor do
   use Supervisor
 
   def start_link(_state) do
@@ -15,7 +15,7 @@ defmodule Tai.AccountsSupervisor do
     accounts |> Enum.map(&config_to_child_spec/1)
   end
 
-  defp config_to_child_spec({name, config}) do
-    Supervisor.child_spec({Tai.Account, {name, config}}, id: name)
+  defp config_to_child_spec({name, [adapter, config]}) do
+    Supervisor.child_spec({adapter, {name, config}}, id: name)
   end
 end

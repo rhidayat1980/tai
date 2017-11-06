@@ -7,4 +7,10 @@ defmodule Tai.Settings do
     accounts()
     |> Enum.map(fn {id, _config} -> id end)
   end
+
+  def account_adapters do
+    Enum.reduce(accounts(), %{}, fn ({id, [adapter, _config]}, acc) ->
+      Map.put(acc, id, adapter)
+    end)
+  end
 end

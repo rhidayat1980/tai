@@ -2,10 +2,13 @@ use Mix.Config
 
 config :tai, accounts: %{
   test_account_a: [
-    Tai.Adapters.Test
+    Tai.Accounts.Adapters.TestSupervisor,
+    Tai.Accounts.Adapters.Test,
+    []
   ],
   test_account_b: [
-    Tai.Adapters.Test,
-    config_key: "some_key"
+    Tai.Accounts.Adapters.TestSupervisor,
+    Tai.Accounts.Adapters.Test,
+    [config_key: "some_key"]
   ]
 }
