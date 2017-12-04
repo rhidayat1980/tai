@@ -14,6 +14,7 @@ use Mix.Config
 #
 #     Application.get_env(:tai, :key)
 #
+config :tai, ecto_repos: [Tai.Repo]
 config :tai, accounts: %{}
 
 # You can also configure a 3rd-party app:

@@ -1,5 +1,5 @@
 defmodule Tai.Strategies.ConfigTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Tai.Strategies.Config
 
   test "all returns the application config" do

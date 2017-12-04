@@ -7,6 +7,8 @@ defmodule Tai.CommandsHelper do
     * sell_limit exchange(:gdax), symbol(:btcusd), price(101.12), size(1.2)
     * order_status exchange(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")
     * cancel_order exchange(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")
+    * history exchange(:gdax), symbol(:btcusd), date_from("2016-01-01"), date_to("2017-01-01"), period("1d")
+    * history_download exchange(:gdax), symbol(:btcusd), date_from("2016-01-01"), date_to("2017-01-01")
     """
   end
 
@@ -80,5 +82,39 @@ defmodule Tai.CommandsHelper do
       {:ok, info} ->
         IO.puts "started: #{info.started_at}"
     end
+  end
+
+  def history(exchange, symbol, date_from_str, date_to_str, period) do
+    {:ok, date_from} = Timex.parse(date_from_str, "{YYYY}-{0M}-{0D}")
+    {:ok, date_to} = Timex.parse(date_to_str, "{YYYY}-{0M}-{0D}")
+
+
+    Tai.History.candles(
+      exchange: exchange,
+      symbol: symbol,
+      date_from: date_from,
+      date_to: date_to,
+      period: period
+    )
+    |> Enum.each(fn(candle) ->
+      IO.puts "#{candle.open_at} o:#{candle.open} h:#{candle.high} l:#{candle.low} c:#{candle.close}"
+    end)
+  end
+
+  def history_download(exchange, symbol, date_from_str, date_to_str) do
+    IO.puts "downloading..."
+
+    {:ok, date_from} = Timex.parse(date_from_str, "{YYYY}-{0M}-{0D}")
+    {:ok, date_to} = Timex.parse(date_to_str, "{YYYY}-{0M}-{0D}")
+
+    Tai.Exchange.history(
+      name: exchange,
+      symbol: symbol,
+      date_from: date_from,
+      date_to: date_to
+    )
+    |> Tai.History.save
+
+    IO.puts "finished!"
   end
 end

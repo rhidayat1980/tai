@@ -1,5 +1,5 @@
 defmodule Tai.CurrencyTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Tai.Currency
 
   test "adds 2 decimals together and returns a decimal" do

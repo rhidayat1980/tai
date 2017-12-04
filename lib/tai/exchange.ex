@@ -36,4 +36,15 @@ defmodule Tai.Exchange do
     |> Config.adapter
     |> (&(&1.cancel_order(order_id))).()
   end
+
+  def history(
+    name: name,
+    symbol: symbol,
+    date_from: date_from,
+    date_to: date_to
+  ) do
+    name
+    |> Config.adapter
+    |> (&(&1.history(symbol: symbol, date_from: date_from, date_to: date_to))).()
+  end
 end

@@ -7,6 +7,10 @@ defmodule Tai.Supervisor do
 
   def init(_) do
     children = [
+      %{
+        id: Tai.Repo,
+        start: {Tai.Repo, :start_link, []}
+      },
       Tai.Strategies.Supervisor
     ]
 

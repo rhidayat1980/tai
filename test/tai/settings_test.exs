@@ -1,5 +1,5 @@
 defmodule Tai.SettingsTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Tai.Settings
 
   test "exchange_ids returns the keys from exchanges" do

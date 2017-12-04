@@ -15,7 +15,9 @@ defmodule Tai.CommandsHelperTest do
     * buy_limit exchange(:gdax), symbol(:btcusd), price(101.12), size(1.2)
     * sell_limit exchange(:gdax), symbol(:btcusd), price(101.12), size(1.2)
     * order_status exchange(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")
-    * cancel_order exchange(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")\n
+    * cancel_order exchange(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")
+    * history exchange(:gdax), symbol(:btcusd), date_from("2016-01-01"), date_to("2017-01-01"), period("1d")
+    * history_download exchange(:gdax), symbol(:btcusd), date_from("2016-01-01"), date_to("2017-01-01")\n
     """
   end
 
@@ -93,5 +95,23 @@ defmodule Tai.CommandsHelperTest do
     assert capture_io(fn ->
       Tai.CommandsHelper.strategy(:test_strategy_a)
     end) == "started: 2010-01-13 14:21:06Z\n"
+  end
+
+  test "history for a symbol can be downloaded within a time range" do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Tai.Repo)
+
+    assert capture_io(fn ->
+      Tai.CommandsHelper.history_download(:test_exchange_a, :btcusd, "2016-01-01", "2016-01-02")
+    end) == """
+    downloading...
+    finished!
+    """
+
+    assert capture_io(fn ->
+      Tai.CommandsHelper.history :test_exchange_a, :btcusd, "2016-01-01", "2016-01-02", "1d"
+    end) == """
+    2016-01-01 00:00:00.000000 o:101.11 h:102.22 l:99.99 c:100.01
+    2016-01-02 00:00:00.000000 o:100.01 h:100.01 l:90.09 c:91.11
+    """
   end
 end

@@ -1,4 +1,7 @@
 defmodule Tai.Exchanges.Adapters.Test do
+  use Timex
+  alias Tai.Candle
+
   def balance do
     Decimal.new(0.11)
   end
@@ -48,5 +51,38 @@ defmodule Tai.Exchanges.Adapters.Test do
   end
   def cancel_order(order_id) do
     {:ok, order_id}
+  end
+
+  def history(symbol: :btcusd, date_from: date_from, date_to: date_to) do
+    [
+      %Candle{
+        open_at: date_from,
+        period: "1d",
+        open: 101.11,
+        high: 102.22,
+        low: 99.99,
+        close: 100.01
+      },
+      %Candle{
+        open_at: date_to,
+        period: "1d",
+        open: 100.01,
+        high: 100.01,
+        low: 90.09,
+        close: 91.11
+      },
+      %Candle{
+        open_at: Timex.shift(date_to, days: 1),
+        period: "1d",
+        open: 91.11,
+        high: 93.44,
+        low: 89.26,
+        close: 89.99
+      }
+    ]
+    |> Stream.map(& &1)
+  end
+  def history(symbol: _symbol, date_from: _date_from, date_to: _date_to) do
+    []
   end
 end
