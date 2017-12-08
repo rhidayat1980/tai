@@ -30,6 +30,13 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
     end
   end
 
+  test "balance returns an error tuple with a message when the request to gdax times out" do
+    use_cassette "balance_error_timeout" do
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.balance
+      assert message == "Timeout"
+    end
+  end
+
   test "quotes returns a bid/ask tuple for the given symbol" do
     use_cassette "quotes_success" do
       {:ok, bid, ask} = Tai.Exchanges.Adapters.Gdax.quotes(:btcusd)
@@ -46,6 +53,14 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
       {:error, message} = Tai.Exchanges.Adapters.Gdax.quotes(:notfound)
 
       assert message == "NotFound"
+    end
+  end
+
+  test "quotes returns an error tuple with a message the request to gdax times out" do
+    use_cassette "quotes_error_timeout" do
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.quotes(:btcusd)
+
+      assert message == "Timeout"
     end
   end
 
@@ -66,6 +81,14 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
     end
   end
 
+  test "buy_limit returns an error tuple with a message when the request to gdax times out" do
+    use_cassette "buy_limit_error_timeout" do
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.buy_limit(:btcusd, 101.1, 0.001)
+
+      assert message == "Timeout"
+    end
+  end
+
   test "sell_limit creates an order for the symbol at the given price" do
     use_cassette "sell_limit_success" do
       {:ok, order_response} = Tai.Exchanges.Adapters.Gdax.sell_limit(:btcusd, 99_999_999.1, 0.2)
@@ -80,6 +103,14 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
       {:error, message} = Tai.Exchanges.Adapters.Gdax.sell_limit(:btcusd, 99_999_999.1, 0.3)
 
       assert message == "Insufficient funds"
+    end
+  end
+
+  test "sell_limit returns an error tuple with a message when the request to gdax times out" do
+    use_cassette "sell_limit_error_timeout" do
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.sell_limit(:btcusd, 99_999_999.1, 0.01)
+
+      assert message == "Timeout"
     end
   end
 
@@ -100,6 +131,15 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
     end
   end
 
+  test "order_status returns an error tuple with a message when the request to gdax times out" do
+    use_cassette "order_status_error_timeout" do
+      {:ok, order_response} = Tai.Exchanges.Adapters.Gdax.buy_limit(:btcusd, 101.1, 0.02)
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.order_status(order_response.id)
+
+      assert message == "Timeout"
+    end
+  end
+
   test "cancel_order returns an ok tuple with the order id when it's successfully cancelled" do
     use_cassette "cancel_order_success" do
       {:ok, order_response} = Tai.Exchanges.Adapters.Gdax.buy_limit(:btcusd, 101.1, 0.2)
@@ -114,6 +154,15 @@ defmodule Tai.Exchanges.Adapters.GdaxTest do
       {:error, message} = Tai.Exchanges.Adapters.Gdax.cancel_order("invalid-order-id")
 
       assert message == "Invalid order id"
+    end
+  end
+
+  test "cancel_order returns an error tuple with a message when the request to gdax times out" do
+    use_cassette "cancel_order_error_timeout" do
+      {:ok, order_response} = Tai.Exchanges.Adapters.Gdax.buy_limit(:btcusd, 101.1, 0.02)
+      {:error, message} = Tai.Exchanges.Adapters.Gdax.cancel_order(order_response.id)
+
+      assert message == "Timeout"
     end
   end
 end
