@@ -144,4 +144,44 @@ defmodule Tai.Exchanges.Config do
     )
     |> Map.fetch!(feed_id)
   end
+
+  def order_feeds do
+    Application.get_env(:tai, :order_feeds)
+  end
+
+  def order_feed_ids do
+    order_feeds()
+    |> Enum.reduce(
+      [],
+      fn {feed_id, _config}, acc ->
+        Enum.concat(acc, [feed_id])
+      end
+    )
+  end
+
+  def order_feed_adapters do
+    order_feeds()
+    |> Enum.reduce(
+      %{},
+      fn {feed_id, [adapter: adapter, symbols: _symbols, opts: _opts]}, acc ->
+        Map.put(acc, feed_id, adapter)
+      end
+    )
+  end
+
+  def order_feed_adapter(feed_id) do
+    order_feed_adapters()
+    |> Map.fetch!(feed_id)
+  end
+
+  def order_feed_symbols(feed_id) do
+    order_feeds()
+    |> Enum.reduce(
+      %{},
+      fn {feed_id, [adapter: _adapter, symbols: symbols, opts: _opts]}, acc ->
+        Map.put(acc, feed_id, symbols)
+      end
+    )
+    |> Map.fetch!(feed_id)
+  end
 end

@@ -21,6 +21,19 @@ config :tai,          order_book_feeds: %{
                         ]
                       }
 
+config :tai,          order_feeds: %{
+                        test_order_feed_a: [
+                          adapter: Tai.ExchangeAdapters.Test.OrderFeed,
+                          symbols: [:btcusd, :ltcusd],
+                          opts: %{}
+                        ],
+                        test_order_feed_b: [
+                          adapter: Tai.ExchangeAdapters.Test.OrderFeed,
+                          symbols: [:ethusd, :ltcusd],
+                          opts: %{}
+                        ]
+                      }
+
 config :tai,          exchanges: %{
                         test_exchange_a: [
                           supervisor: Tai.ExchangeAdapters.Test.Supervisor
@@ -31,6 +44,6 @@ config :tai,          exchanges: %{
                       }
 
 config :tai,          advisors: %{
-                        test_advisor_a: Support.Advisors.Info,
-                        test_advisor_b: Support.Advisors.Info
+                        test_advisor_a: Support.Advisors.SpreadCapture,
+                        test_advisor_b: Support.Advisors.SpreadCapture
                       }

@@ -8,7 +8,10 @@ defmodule Tai.Supervisor do
   def init(:ok) do
     children = [
       Tai.PubSub,
+      Tai.Trading.Supervisor,
       Tai.Exchanges.Supervisor,
+      # TODO: Move this into exchanges supervisor
+      # Tai.Exchanges.OrderFeedsSupervisor,
       Tai.Advisors.Supervisor
     ]
 
