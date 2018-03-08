@@ -19,7 +19,7 @@ defmodule Tai.ExchangeAdapters.Gdax.OrderBookFeed do
   Subscribe to the level2 channel for the configured symbols
   """
   def subscribe_to_order_books(name, symbols) do
-    [name: name, symbols: symbols, channels: ["level2"]]
+    [name: name, symbols: symbols, channels: ["level2", "heartbeat"]]
     |> subscribe
   end
 
@@ -71,6 +71,22 @@ defmodule Tai.ExchangeAdapters.Gdax.OrderBookFeed do
     |> OrderBook.to_name
     |> OrderBook.update(normalized_changes)
     |> broadcast_order_book_changes(feed_id, symbol, normalized_changes)
+  end
+  @doc """
+  TODO:
+  Heartbeat should keep it alive. If it doesn''t receive a message in N time
+  tai should check the connection, reconnect if need be. Shutdown other wise?
+  """
+  def handle_msg(
+    %{
+      "type" => "heartbeat",
+      "product_id" => _product_id,
+      "last_trade_id" => _last_trade_id,
+      "sequence" => _sequence,
+      "time" => _time
+    },
+    _feed_id
+  ) do
   end
   @doc """
   Log a warning message when the WebSocket receives a message that is not explicitly handled
