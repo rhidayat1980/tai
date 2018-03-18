@@ -1,8 +1,8 @@
-defmodule Tai.ExchangeAdapters.Binance.OrderBookFeed do
+defmodule Tai.ExchangeAdapters.OkEx.OrderBookFeed do
   @moduledoc """
-  WebSocket order book feed adapter for Binance
+  WebSocket order book feed adapter for OkEx
 
-  https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md
+  https://www.okcoin.com/ws_request.html
   """
 
   use Tai.Exchanges.OrderBookFeed
@@ -12,25 +12,28 @@ defmodule Tai.ExchangeAdapters.Binance.OrderBookFeed do
   alias Tai.{Exchanges.OrderBookFeed}
 
   @doc """
-  Secure production Binance WebSocket url
+  Secure production OkEx WebSocket url
   """
-  def default_url, do: "wss://stream.binance.com:9443"
+  def default_url, do: "wss://real.okcoin.com:10440/websocket"
 
   @doc """
   """
   def subscribe_to_order_books(name, []), do: :ok
   def subscribe_to_order_books(name, [symbol | tail]) do
+    Logger.info "========== OkEx subscribe_to_order_books"
     [
       name: name,
       msg: %{
-        event: "subscribe",
-        channel: "book",
-        # pair: "BTCUSD"
-        # pair: symbol |> Product.to_product_id
-        pair: symbol |> Atom.to_string |> String.upcase
+        event: "addChannel",
+        # channel: "ok_sub_spot_btc_usd_depth_20",
+        # channel: "ok_sub_spot_btc_usd_depth",
+        channel: "ok_sub_spot_ltc_btc_depth",
+        # binary: "1"
       }
     ]
     |> send_msg
+
+    # "[{'event':'addChannel','channel':'ok_btcusd_ticker'},{'event':'addChannel','channel':'ok_btcusd_depth'},{'event':'addChannel','channel':'ok_btcusd_trades'}]"
 
     subscribe_to_order_books(name, tail)
   end

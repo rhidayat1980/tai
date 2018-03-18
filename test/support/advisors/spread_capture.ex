@@ -10,7 +10,7 @@ defmodule Support.Advisors.SpreadCapture do
     Logger.debug "[#{state.advisor_id |> Advisor.to_name}] handle_order_book_changes - order_book_feed_id: #{order_book_feed_id}, symbol: #{symbol}, changes: #{inspect changes}"
   end
 
-  def handle_inside_quote(order_book_feed_id, symbol, bid, ask, changes, state) do
+  def handle_inside_quote(order_book_feed_id, :btcusd = symbol, bid, ask, changes, state) do
     Logger.debug "[#{state.advisor_id |> Advisor.to_name}] handle_inside_quote - order_book_feed_id: #{order_book_feed_id}, symbol: #{symbol}, bid/ask: #{inspect bid}/#{inspect ask}, changes: #{inspect changes}"
 
     cond do
@@ -24,6 +24,13 @@ defmodule Support.Advisors.SpreadCapture do
       true ->
         :ok
     end
+  end
+  def handle_inside_quote(:ok_ex = order_book_feed_id, symbol, bid, ask, changes, state) do
+    Logger.debug "[#{state.advisor_id |> Advisor.to_name}] handle_inside_quote - order_book_feed_id: #{order_book_feed_id}, symbol: #{symbol}, bid/ask: #{inspect bid}/#{inspect ask}, changes: #{inspect changes}"
+    Logger.info "[#{state.advisor_id |> Advisor.to_name}] handle_inside_quote for Okex ***********"
+  end
+  def handle_inside_quote(order_book_feed_id, symbol, bid, ask, changes, state) do
+    Logger.debug "[#{state.advisor_id |> Advisor.to_name}] handle_inside_quote - order_book_feed_id: #{order_book_feed_id}, symbol: #{symbol}, bid/ask: #{inspect bid}/#{inspect ask}, changes: #{inspect changes}"
   end
 
   def handle_order_enqueued(order, state) do
