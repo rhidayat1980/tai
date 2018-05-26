@@ -6,6 +6,7 @@ defmodule Tai.Commands.Helper do
   alias Tai.Commands
 
   defdelegate help, to: Commands.Info
+  defdelegate dashboard, to: Commands.Dashboard
   defdelegate balance, to: Commands.Balance
   defdelegate markets, to: Commands.Markets
   defdelegate orders, to: Commands.Orders

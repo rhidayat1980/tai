@@ -18,6 +18,7 @@ defmodule Tai.Commands.HelperTest do
 
   test "help returns the usage for the supported commands" do
     assert capture_io(&Helper.help/0) == """
+           * dashboard
            * balance
            * markets
            * orders
@@ -25,6 +26,28 @@ defmodule Tai.Commands.HelperTest do
            * sell_limit account_id(:gdax), symbol(:btcusd), price(101.12), size(1.2)
            * order_status account_id(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")
            * cancel_order account_id(:gdax), order_id("f1bb2fa3-6218-45be-8691-21b98157f25a")\n
+           """
+  end
+
+  test "dashboard shows the sum of major asset balances across accounts" do
+    assert capture_io(&Helper.dashboard/0) == """
+           ===================================
+
+           +14.76% 17.82 BTC ($133,650 +7.64%)
+
+           ===================================
+           btc[+12.67%]     12.7500
+           -----------------------------------
+           usd[+3.03%]      1088.39
+           -----------------------------------
+           eth[+1.06%]      106.0455
+           -----------------------------------
+           usdt[+0.53%]     14.92
+           -----------------------------------
+           tusd[+0.0%]      0.17
+           -----------------------------------
+           others[-1.13%]   3.41
+           -----------------------------------\n
            """
   end
 

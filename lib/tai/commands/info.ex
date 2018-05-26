@@ -1,6 +1,11 @@
 defmodule Tai.Commands.Info do
+  @moduledoc """
+  Show the available commands
+  """
+
   def help do
     IO.puts("""
+    * dashboard
     * balance
     * markets
     * orders
