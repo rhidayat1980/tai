@@ -37,15 +37,25 @@ defmodule Tai.Trading.OrderStore do
     {:reply, new_orders, new_state}
   end
 
+  @attr_whitelist [
+    :created_at,
+    :error_reason,
+    :executed_size,
+    :server_id,
+    :status
+  ]
   def handle_call({:update, client_id, attrs}, _from, state) do
     {_previous_order, new_state} =
-      Map.get_and_update(state, client_id, fn current_order ->
-        attr_whitelist = [:server_id, :created_at, :status]
-        accepted_attrs = attrs |> Keyword.take(attr_whitelist) |> Map.new()
-        updated_order = current_order |> Map.merge(accepted_attrs)
-
-        {current_order, updated_order}
-      end)
+      Map.get_and_update(
+        state,
+        client_id,
+        fn current_order ->
+          with accepted_attrs <- attrs |> Keyword.take(@attr_whitelist) |> Map.new(),
+               updated_order <- current_order |> Map.merge(accepted_attrs) do
+            {current_order, updated_order}
+          end
+        end
+      )
 
     updated_order = new_state[client_id]
 
@@ -69,7 +79,12 @@ defmodule Tai.Trading.OrderStore do
   end
 
   def handle_call({:count, status: status}, _from, state) do
-    {:reply, state |> filter(status: status) |> Enum.count(), state}
+    count =
+      state
+      |> filter(status: status)
+      |> Enum.count()
+
+    {:reply, count, state}
   end
 
   @doc """
@@ -150,7 +165,8 @@ defmodule Tai.Trading.OrderStore do
           size: abs(submission.size),
           time_in_force: submission.time_in_force,
           status: OrderStatus.enqueued(),
-          enqueued_at: Timex.now()
+          enqueued_at: Timex.now(),
+          order_updated_callback: submission.order_updated_callback
         }
 
         [order | acc]

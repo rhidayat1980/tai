@@ -151,11 +151,15 @@ defmodule Tai.Trading.OrderStoreTest do
         client_id: "should_not_replace_client_id",
         server_id: "the_server_id",
         created_at: created_at = Timex.now(),
+        executed_size: 1.0,
+        error_reason: 'some kind of error',
         status: OrderStatus.pending()
       )
 
     assert updated_order.server_id == "the_server_id"
     assert updated_order.created_at == created_at
+    assert updated_order.executed_size == 1.0
+    assert updated_order.error_reason == 'some kind of error'
     assert updated_order.status == OrderStatus.pending()
     assert updated_order.client_id != "should_not_replace_client_id"
     assert Tai.Trading.OrderStore.find(order.client_id) == updated_order
